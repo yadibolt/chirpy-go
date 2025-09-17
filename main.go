@@ -32,14 +32,14 @@ func main() {
 	mux.Handle("/app/assets/", fileServerAssetsHandler)
 
 	// server health
-	mux.HandleFunc("/healthz/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
 
 	// metrics - hits
-	mux.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /metrics", func(w http.ResponseWriter, r *http.Request) {
 		hits := fmt.Sprintf("Hits: %d", apiCfg.FServerHits.Load())
 		
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
@@ -48,7 +48,7 @@ func main() {
 	})
 
 	// metrics - reset
-	mux.HandleFunc("/reset/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("POST /reset", func(w http.ResponseWriter, r *http.Request) {
 		apiCfg.FServerHits.Store(0)
 		w.WriteHeader(http.StatusOK)
 	})
