@@ -8,12 +8,15 @@ import (
 	"encoding/json"
 	"strings"
 	"slices"
-	"internal/database"
+	"os"
+	"database/sql"
+	"github.com/yadibolt/chirpy-go/internal/database"
+	"github.com/joho/godotenv"
 )
 
 type apiConfig struct {
 	FServerHits atomic.Int32
-	DBQueries database.Queries
+	DBQueries *database.Queries 
 }
 
 type RequestJsonStruct struct {
@@ -89,9 +92,16 @@ func main() {
 
 	databaseURL := os.Getenv("DB_URL")
 	db, err := sql.Open("postgres", databaseURL)
-	dbQueries := database.New(db)
+	if err != nil {
+		log.Printf("Could not connect to the database.")
+		return
+	} else {
+		log.Printf("Connection to the database established.")
+	}
 
 	apiCfg := apiConfig{}
+	dbQueries := database.New(db)
+	apiCfg.DBQueries = dbQueries
 	mux := http.NewServeMux()
 
 	// main entry
