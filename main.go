@@ -8,10 +8,12 @@ import (
 	"encoding/json"
 	"strings"
 	"slices"
+	"internal/database"
 )
 
 type apiConfig struct {
 	FServerHits atomic.Int32
+	DBQueries database.Queries
 }
 
 type RequestJsonStruct struct {
@@ -83,6 +85,12 @@ func checkProfane(message string) string {
 }
 
 func main() {
+	godotenv.Load()
+
+	databaseURL := os.Getenv("DB_URL")
+	db, err := sql.Open("postgres", databaseURL)
+	dbQueries := database.New(db)
+
 	apiCfg := apiConfig{}
 	mux := http.NewServeMux()
 
