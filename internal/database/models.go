@@ -5,13 +5,22 @@
 package database
 
 import (
-	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-type User struct {
-	ID        int32
+type Chirp struct {
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Email     sql.NullString
+	Body      string
+	UserID    uuid.UUID
+}
+
+type User struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Email     string
 }
